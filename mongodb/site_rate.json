@@ -1,0 +1,4 @@
+{ "_id" : 30, "site_id" : 124, "user_ip" : "127.0.0.1", "value" : 3.5 }
+{ "_id" : 31, "site_id" : 133, "user_ip" : "127.0.0.1", "value" : 5 }
+{ "_id" : 32, "site_id" : 140, "user_ip" : "127.0.0.1", "value" : 2.5 }
+{ "_id" : 33, "site_id" : 143, "user_ip" : "127.0.0.1", "value" : 5 }
