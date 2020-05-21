@@ -1,0 +1,58 @@
+// 用表存的好处是，刷新页面无所谓，只跟email有关。 坏处是, 改变email之后, 没有其他id支撑进行删除
+// 综合考虑还是用session
+验证码表-注册的时候用 reg_code
+email, code, date, times,
+
+用户表
+_id, ip, name, password, is_super, email
+
+网站表
+_id, name, url, desc, img, catalog 所属分类 create_time, views 浏览量, status, user_id
+
+分类表
+_id name
+
+网站评分
+_id, site_id, user_id, user_ip, value
+
+
+var md5 = require('./model/md5');
+app.post('/dopost', function(req, res, next) {
+	var reqBody = req.body;
+	var psw = md5(reqBody.password);
+	psw = md5(psw.substr(4, 7) + psw)
+	db.insertOne('md5users', {
+		username: reqBody.username,
+		password: psw
+	}, function(err, result) {
+		if (err) {
+			res.send('-1')
+			return;
+		}
+		res.send(result)
+	})
+	// res.render()
+})
+
+当第二页只有一条， 而且正好删除的时候-就有bug了
+
+新增草稿-草稿-新增
+新增网页-正常-新增
+
+修改草稿-草稿-状态修改
+上架草稿-正常-状态修改
+
+下架网页-下架-状态修改
+删除网页-没有-删除
+
+
+图片
+正常第一次 选择图片之后进行展示 imgfile img也就是图片地址 imgbolb图片源文件 imgdef 默认图片
+
+之后编辑 
+img存在 -> 提交 -> img
+img存在 -> img展示图片 -> 选择图片 -> 展示imgblob -> 提交 imgfile
+img不存在 -> imgdef展示默认图片 -> 选择图片 -> 展示imgblob -> 提交 imgfile
+
+s
+展示imgblob ? imgblob : img ? img : imgdef 

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="./animate.min.css">
+	<style>
+.container {
+ background: #2f2f2f;
+  width: 80%;
+  height: 300px;
+  box-sizing: border-box;
+  margin: 0 auto;
+  text-align: center;
+  padding-top: 5%;
+}
+.corner-button {
+  letter-spacing: 0.32px;
+  cursor: pointer;
+  background: transparent;
+  border: 8px solid currentColor;
+  padding: 24px 32px;
+  font-size: 35px;
+  color: #06c17f;
+  position: relative;
+  transition: color 0.3s;
+}
+.corner-button:hover {
+  color: blue;
+}
+.corner-button:hover::before {
+  width: 0;
+}
+.corner-button:hover::after {
+  height: 0;
+}
+/* .corner-button:active {
+  border-width: 4px;
+} */
+.corner-button span {
+  position: relative;
+  z-index: 2;
+}
+.corner-button::before,
+.corner-button::after {
+  content: '';
+  position: absolute;
+  background: #2f2f2f;
+  z-index: 1;
+  transition: all 0.3s;
+}
+.corner-button::before {
+  width: calc(100% - 48px);
+  height: calc(100% + 16px);
+  /*top: -8px;  */
+  /*left: 50%; */
+  -webkit-transform: translateX(-50%);      
+  transform: translateX(-50%);
+}
+.corner-button::after {
+  height: calc(100% - 48px);
+  width: calc(100% + 16px);
+  /*left: -8px;*/
+  /*top: 50%;*/
+  -webkit-transform: translateY(-50%);          
+  transform: translateY(-50%);
+}
+
+	</style>
+</head>
+<body>
+	<span class="animate__animated ">阿斯蒂芬</span>
+<div class="container">
+  <button class="corner-button">
+    <span>Click me</span>
+  </button>
+</div>
+</body>
+</html>
