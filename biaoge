@@ -7,7 +7,7 @@ email, code, date, times,
 _id, ip, name, password, is_super, email
 
 网站表
-_id, name, url, desc, img, catalog 所属分类 create_time, views 浏览量, status, user_id
+_id, name, url, desc, img, catalog 所属分类 create_time, views 浏览量, status, user_id, tags 标签, monthViews: [],
 
 分类表
 _id name

@@ -10,7 +10,7 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: #000000;
+            /*background-color: #000000;*/
         }
 
     </style>
@@ -92,7 +92,7 @@
             drawFigure: function () {
                 requestAnimationFrame(this.drawFigure);
 
-                this.context.fillStyle = 'rgba(0, 0, 0, 0.2)';
+                this.context.fillStyle = 'rgba(0, 0, 0, 1)';
                 this.context.fillRect(0, 0, this.width, this.height);
 
                 for (var i = 0, length = this.particles.length; i < length; i++) {
@@ -124,7 +124,8 @@
             RING_COUNT: 5,
 
             getStrategies: function () {
-                var strategies = [];
+                return [this.createTorus.bind(this)]
+                /*var strategies = [];
 
                 for (var i in this) {
                     if (this[i] == arguments.callee || typeof this[i] != 'function') {
@@ -132,7 +133,7 @@
                     }
                     strategies.push(this[i].bind(this));
                 }
-                return strategies;
+                return strategies;*/
             },
             createTorus: function () {
                 var theta = Math.random() * Math.PI * 2,

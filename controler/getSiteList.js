@@ -3,7 +3,7 @@ const {
 	prevCheck,
 	success, 
 	failed,
-	isUserLogin
+	checkUserLogin
 } = require('./com')
 const {
 	getClientIP, 
@@ -29,14 +29,22 @@ function get$rated$val (list, ip, id) {
 	}
 }
 
+function strSearch (str='') {
+	return new RegExp(str, 'gim')
+}
 
 module.exports = async (req, res, next) => {
 	if (!prevCheck(req, res)) {
 		return;
 	}
+	const orderMap = {
+		'create_time': true,
+		'views': true,
+		'monthViews': true,
+	}
 
 	const user_ip = getClientIP(req);
-	const {catalog, status, pageIndex, pageSize, isTotal, is_edit, tag_name} = req.body;
+	const { catalog, status, pageIndex, pageSize, isTotal, is_edit, tag_name, orderBy, search } = req.body;
 	const { user_id } = req.cookies
 	let conditoin = {
 		catalog: {
@@ -45,14 +53,22 @@ module.exports = async (req, res, next) => {
 	    // catalog: catalog+'',
 	    status,
 	    create_user_id: user_id,
-	    tags: { $in: [new RegExp(tag_name, 'gim')] }
+	    tags: { $in: [strSearch(tag_name)] },
+	    $or: [{name: strSearch(search)}, {desc: strSearch(search)}, {tags: { $in: [strSearch(search)] }}]
 	};
+	// console.log(req.cookies);
 	(catalog === undefined || catalog === -1) && delete conditoin.catalog;
 	(status === undefined || status === -1) && delete conditoin.status;
-	!tag_name && delete tags
+	!tag_name && delete conditoin.tags;
+	!search && delete conditoin.$or;
+
 	if (is_edit) {
 		if (user_id) {
-			const ust = isUserLogin(req.cookies.user_token) || {};
+			// 如果传过来的id跟 之前的那个id不一致
+			const ust = checkUserLogin(req, res);
+			if (!ust) {
+				return;
+			}
 			// console.log(usid , user_id)
 			if (ust._id !== user_id) {
 				return res.json(failed('', '该用户未登录或登录已失效!'))
@@ -72,12 +88,15 @@ module.exports = async (req, res, next) => {
 	} else {
 		delete conditoin.create_user_id
 	}
-
-	sitedb.find('sites', conditoin, {pageIndex, pageSize}, {create_time: -1}).then(async list => {
+	const sortOrder = {}
+	sortOrder[(orderMap[orderBy] ? orderBy : 'create_time')] = -1;
+	// console.log(conditoin)
+	sitedb.find('sites', conditoin, {pageIndex, pageSize}, sortOrder).then(async list => {
 		let ratelist= [];
 		let userlist = [];
 		let cataloglist = [];
 
+		// 这里可以一起查询 节约查询时间，但是可能会给系统造成负担
 		if (list.length != 0) {
 			ratelist = await sitedb.find('site_rate', {$or: list.map(({_id}) => ({site_id: _id}))})
 			userlist = await sitedb.find('users', {$or: list.map(({create_user_id}) => ({_id: create_user_id}))})

@@ -16,12 +16,14 @@ const {
 	getNextSequenceValue, 
 	deleteFolder,
 	mkdir,
+	checkUrl,
 } = require('../model/common.js')
 
 const {
 	DRAFT_CODE,
 	DELETE_CODE,
-	NORMAL_CODE
+	NORMAL_CODE,
+	REVIEW_CODE
 } = require('./constant')
 
 // 检查网站新增以及编辑的参数是否正确
@@ -43,16 +45,26 @@ async function checkSiteParam (req, res, fields, _id) {
 		res.json(failed('', '请填写！'))
 		return false;
 	}*/
-	if (status == NORMAL_CODE && !checkLegal(res, url, '网站地址')) {
-		// res.json(failed('', '请填写网站地址！'))
+	if (!checkUrl(url)) {
+		res.json(failed('', '网站地址不合法！'))
 		return false;
 	}
-	if (status == NORMAL_CODE && !checkLegal(res, desc, '网站描述')) {
+	/*if (status == NORMAL_CODE && !checkLegal(res, url, '网站地址')) {
+		// res.json(failed('', '请填写网站地址！'))
+		return false;
+	}*/
+	// if (status == NORMAL_CODE && !checkLegal(res, desc, '网站描述')) {
+	if (status == NORMAL_CODE && !desc) {
 		// res.json(failed('', '请填写网站描述！'))
 		return false;
 	}
+	
 	if (status == NORMAL_CODE && !catalog.length > 0) {
 		res.json(failed('', '请选择网站所属分类！'))
+		return false;
+	}
+	if (status == NORMAL_CODE && !tags.length > 0) {
+		res.json(failed('', '请添加网站标签！'))
 		return false;
 	}
 	/*if (status == NORMAL_CODE && !checkLegal(res, tCagalog, '网站所属分类')) {
@@ -137,6 +149,15 @@ function checkSiteImg (req, res, fields, files, _id) {
 	}
 }
 
+async function getStatus (user_id, tStatus) {
+	let status = parseInt(tStatus)
+	const [user] = await sitedb.find('users', {_id: user_id})
+	// 不是管理员，但是想上架, 直接改为待审核状态
+	if (!user.is_super && status == NORMAL_CODE) {
+		status = REVIEW_CODE
+	}
+	return status;
+}
 // 新增网站-两种状态-草稿和正常都是用这个接口
 exports.addSite = async (req, res, next) => {
 	if (!prevCheck(req, res)) {
@@ -157,7 +178,7 @@ exports.addSite = async (req, res, next) => {
 		}
 		const { name: [name=''], url: [url=''], desc: [desc=''], catalog=[], status: [tStatus=NORMAL_CODE], tags } = fields
 
-		const status = parseInt(tStatus)
+		let status = await getStatus(user_id, tStatus)
 		// return res.json(failed(fields, 'ttt'))
 		if (!await checkSiteParam(req, res, fields)) {
 			return ;
@@ -210,7 +231,9 @@ exports.editSite = async (req, res, next) => {
 		}
 		const {_id: [t_id], name: [name=''], url: [url=''], desc: [desc=''], catalog=[], status: [tStatus=NORMAL_CODE], tags=[]} = fields
 
-		const status = parseInt(tStatus)
+		let status = await getStatus(user_id, tStatus)
+		
+
 		const _id = parseInt(t_id)
 		// return res.json(failed(fields, 'ttt'))
 		// 所有状态-至少要有名字

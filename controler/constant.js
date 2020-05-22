@@ -1,6 +1,8 @@
 const DRAFT_CODE = 2;
 const DELETE_CODE = 0;
 const NORMAL_CODE = 1;
+const REVIEW_CODE = 3;	// 待审核
+
 const MAIL_MAX_COUNT = 5;
 
 const REG_CODE_EXP = 30 * 60 * 1000;
@@ -16,6 +18,8 @@ module.exports = {
 	DRAFT_CODE,
 	DELETE_CODE,
 	NORMAL_CODE,
+	REVIEW_CODE,
+	STATUS_ARR: [DRAFT_CODE, DELETE_CODE, NORMAL_CODE, REVIEW_CODE],
 	REG_CODE_EXP,
 	RET,
 	superEmail,

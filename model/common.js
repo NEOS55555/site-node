@@ -80,6 +80,13 @@ exports.checkMail = (mail='') => {
 	const reg = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
 	return reg.test(mail)
 }
+exports.checkUrl = (url='') => {
+	if (url === '' || url === null) {
+		return false;
+	}
+	const reg = /(https?|ftp|file):\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]/
+	return reg.test(url)
+}
 /*exports.getCookie = (str='') => {
 	const arr = str.split(';');
 	const map = {};

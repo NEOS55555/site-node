@@ -13,9 +13,10 @@ module.exports = (req, res, next) => {
 	if (!_id) {
 		return res.json(failed('err', 'e.id.n'));
 	}
+	
 	sitedb.findOneAndUpdate('sites',
 		{_id},
-		{$inc:{views:1}},
+		{$inc:{views:1, monthViews: 1,}},
 		{new:true}
 	).then(result => {
 		res.json(success(result.value.views+1))

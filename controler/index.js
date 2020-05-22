@@ -35,7 +35,7 @@ const { REG_CODE_EXP } = require('./constant');
 
 const schedule = require('node-schedule');
 
-// 定期清除过期验证码
+// 每天，定期清除过期验证码
 schedule.scheduleJob('0 30 1 * * *', async function () {
 	// await clearExpCode();
 	console.log('现在是凌晨:' + new Date() + '。开始清除过期验证码。');
@@ -45,6 +45,21 @@ schedule.scheduleJob('0 30 1 * * *', async function () {
 		}
 	})
     console.log('现在是凌晨:' + new Date() + '。已经清除过期验证码。');
+});
+// 每个月，定期清零月点击
+schedule.scheduleJob('0 30 1 1 * *', async function () {
+	// await clearExpCode();
+	console.log('现在是凌晨:' + new Date() + '。开始清零。');
+	await sitedb.updateMany('sites', {
+		monthViews: {
+	        $gt: 0
+	    }
+	}, {
+		$set: {
+			monthViews: 0
+		}
+	})
+    console.log('现在是凌晨:' + new Date() + '。已经清零。');
 });
 
 
