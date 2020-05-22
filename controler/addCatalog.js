@@ -3,6 +3,7 @@ const silly = require('silly-datetime')
 
 const {
 	getNextSequenceValue,
+	trim,
 } = require('../model/common.js')
 const {
 	prevCheck,
@@ -15,7 +16,8 @@ module.exports = async (req, res, next) => {
 	if (!prevCheck(req, res)) {
 		return;
 	}
-	const {name} = req.body;
+	let {name} = req.body;
+	name = trim(name)
 	if (!checkLegal(res, name, '分类名称')) {
 		return ;
 	}

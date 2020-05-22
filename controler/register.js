@@ -1,4 +1,5 @@
 const sitedb = require('../model/currentDbs')
+const { superEmail, REG_CODE_EXP, RET, LOGIN_DURATION } = require('./constant');
 const {
 	prevCheck,
 	checkLegal,
@@ -8,12 +9,11 @@ const {
 } = require('./com')
 const md5 = require('../model/md5.js')
 
-const { superEmail, REG_CODE_EXP, RET, LOGIN_DURATION } = require('./constant');
-
 const {
 	getClientIP, 
 	getNextSequenceValue, 
-	checkMail
+	checkMail,
+	trim,
 } = require('../model/common.js')
 // 注册用户
 module.exports = async (req, res, next) => {
@@ -22,8 +22,11 @@ module.exports = async (req, res, next) => {
 	}
 
 	const ip = getClientIP(req);
-	const {name='', password: psw='', email='', code} = req.body;
-	const password = md5(psw);
+	let {name='', password: psw='', email='', code} = req.body;
+	name = trim(name);
+	psw = trim(psw);
+	email = trim(email);
+
 	if (!checkLegal(res, name, '用户名')) {
 		return ;
 	}
@@ -34,6 +37,7 @@ module.exports = async (req, res, next) => {
 		res.send(failed('', '邮箱不合法！'))
 		return ;
 	}
+	const password = md5(psw);
 	/*if (!checkMail(email)) {
 		res.send(failed('', '邮箱不合法！'))
 		return ;
@@ -62,7 +66,7 @@ module.exports = async (req, res, next) => {
 
 	getNextSequenceValue(sitedb, 'userId').then(async t_id => {
 		const _id = md5(t_id);
-
+		const is_super = superEmail.indexOf(email) > -1
 		sitedb.insertOne('users', {
 			_id,
 			name,
@@ -70,10 +74,10 @@ module.exports = async (req, res, next) => {
 			password,
 			email,
 			ip,
-			is_super: superEmail.indexOf(email) > -1
+			is_super
 		}).then(result => {
 			// 
-			const token = jwtSign({_id, name})
+			const token = jwtSign({_id, name, is_async: is_super})
 			res.json(success({_id, name, token}, '注册成功！'))
 		}).catch(err => {
 			res.json(failed(err))

@@ -8,8 +8,9 @@ const {
 const {
 	getClientIP, 
 	clearRepArr,
+	trim,
 } = require('../model/common.js')
-
+// 编辑状态，非super不可 获取其他状态
 
 function get$rated$val (list, ip, id) {
 	let length = list.length;
@@ -44,7 +45,11 @@ module.exports = async (req, res, next) => {
 	}
 
 	const user_ip = getClientIP(req);
-	const { catalog, status, pageIndex, pageSize, isTotal, is_edit, tag_name, orderBy, search } = req.body;
+	let { catalog, status, pageIndex, pageSize, isTotal, is_edit, tag_name, orderBy, search } = req.body;
+	tag_name = trim(tag_name);
+	search = trim(search);
+
+
 	const { user_id } = req.cookies
 	let conditoin = {
 		catalog: {
@@ -129,6 +134,8 @@ module.exports = async (req, res, next) => {
 			it.create_user_name = userMap[it.create_user_id];
 			// it.catalog_name = it.catalog.map(id => catalogMap[id])
 		})
+		// setTimeout(() => {
+
 		if (isTotal) {
 			sitedb.count('sites', conditoin).then(total => {
 				res.json(success({list, total}))
@@ -138,5 +145,6 @@ module.exports = async (req, res, next) => {
 		} else {
 			res.json(success({list}))
 		}
+		// }, 3999)
 	})
 }

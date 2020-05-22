@@ -17,6 +17,7 @@ const {
 	deleteFolder,
 	mkdir,
 	checkUrl,
+	trim,
 } = require('../model/common.js')
 
 const {
@@ -28,7 +29,11 @@ const {
 
 // 检查网站新增以及编辑的参数是否正确
 async function checkSiteParam (req, res, fields, _id) {
-	const {_id: t_id, name: [name=''], url: [url=''], desc: [desc=''], catalog=[], status: [tStatus=NORMAL_CODE], img, tags=[]} = fields
+	let {_id: t_id, name: [name=''], url: [url=''], desc: [desc=''], catalog=[], status: [tStatus=NORMAL_CODE], img, tags=[]} = fields
+	name = trim(name);
+	url = trim(url);
+	desc = trim(desc);
+
 	// console.log(fields, tCagalog)
 	// const catalog = tCagalog ? tCagalog.split(',').map(num => parseInt(num)) : [];
 
@@ -36,7 +41,10 @@ async function checkSiteParam (req, res, fields, _id) {
 	// console.log(status)
 	// console.log(catalog)
 	// return res.json(failed(fields, 'ttt'))
-	
+	if (isNaN(status)) {
+		res.json(failed('', 'status code error!'))
+		return false;
+	}
 	// 所有状态-至少要有名字
 	if (!checkLegal(res, name, '网站名称')) {
 		return false;
@@ -156,6 +164,7 @@ async function getStatus (user_id, tStatus) {
 	if (!user.is_super && status == NORMAL_CODE) {
 		status = REVIEW_CODE
 	}
+
 	return status;
 }
 // 新增网站-两种状态-草稿和正常都是用这个接口
@@ -178,11 +187,12 @@ exports.addSite = async (req, res, next) => {
 		}
 		const { name: [name=''], url: [url=''], desc: [desc=''], catalog=[], status: [tStatus=NORMAL_CODE], tags } = fields
 
-		let status = await getStatus(user_id, tStatus)
 		// return res.json(failed(fields, 'ttt'))
 		if (!await checkSiteParam(req, res, fields)) {
 			return ;
 		}
+
+		let status = await getStatus(user_id, tStatus)
 		// 保存网站
 		getNextSequenceValue(sitedb, 'siteId').then(_id => {
 			const isImgOk = checkSiteImg(req, res, fields, files, _id);
@@ -229,21 +239,30 @@ exports.editSite = async (req, res, next) => {
 			console.log('editSite', err)
 			return res.json(failed(err))
 		}
-		const {_id: [t_id], name: [name=''], url: [url=''], desc: [desc=''], catalog=[], status: [tStatus=NORMAL_CODE], tags=[]} = fields
+		const {_id: [t_id], name: [name=''], url: [url=''], desc: [desc=''], catalog=[], status: [tStatus=NORMAL_CODE], tags=[], orgStatus: [orgStatus]} = fields
 
-		let status = await getStatus(user_id, tStatus)
-		
+
 
 		const _id = parseInt(t_id)
 		// return res.json(failed(fields, 'ttt'))
 		// 所有状态-至少要有名字
 		if (!_id) {
-			return res.json(failed('', '！'))
+			return res.json(failed('', 'user code error!'))
 		}
 		if (!await checkSiteParam(req, res, fields, _id)) {
 			return ;
 		}
-	
+		
+		let status = await getStatus(user_id, tStatus)
+		console.log(orgStatus, status)
+		// YOU WEN TI
+		if (parseInt(orgStatus) === NORMAL_CODE && status === DRAFT_CODE) {
+			return res.json(failed('', '权限不足！'))
+		}
+		if (parseInt(orgStatus) === NORMAL_CODE && status === REVIEW_CODE) {
+			return res.json(failed('', '已上架，不可重复提交！'))
+		}
+
 		const isImgOk = checkSiteImg(req, res, fields, files, _id);
 		if (!isImgOk) {
 			return;

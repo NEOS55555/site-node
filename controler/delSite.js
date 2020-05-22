@@ -46,6 +46,9 @@ module.exports = async (req, res, next) => {
 			delete condition.create_user_id
 		}
 		if (status == NORMAL_CODE) {	
+			if (!user.is_super) {
+				return res.json(failed('', '权限不足，不可下架！'))
+			}
 			sitedb.updateOne('sites', condition, {$set: {status: 0}}).then(result => {
 				console.log('delsite', result.result)
 				res.json(success(result.result))

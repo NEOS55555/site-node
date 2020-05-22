@@ -23,7 +23,7 @@ exports.getNextSequenceValue = (db, sequenceName) => {
 		}).catch(err => reject(err))
 	})
 }
-
+exports.trim = (str='') => str.replace(/^\s+|\s+$/gm,'')
 
 // 创建文件夹
 
@@ -70,7 +70,7 @@ exports.isLegal = (str='') => {
 	if (str === '' || str === null) {
 		return false;
 	}
-	const reg = /[\@\#\$\%\^\&\*\{\}\:\：\.\"\L\<\>\?\|]/ig
+	const reg = /[\s\@\#\$\%\^\&\*\{\}\:\：\.\"\L\<\>\?\|]/ig
 	return !reg.test(str)
 }
 exports.checkMail = (mail='') => {
