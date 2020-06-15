@@ -1,5 +1,8 @@
+// 评论表
+_id, user_id, site_id, to_user_id, create_time, to_comment_id, content
+
 // 用表存的好处是，刷新页面无所谓，只跟email有关。 坏处是, 改变email之后, 没有其他id支撑进行删除
-// 综合考虑还是用session
+// 综合考虑还是用session-最后还是没用
 验证码表-注册的时候用 reg_code
 email, code, date, times,
 
@@ -7,7 +10,7 @@ email, code, date, times,
 _id, ip, name, password, is_super, email
 
 网站表
-_id, name, url, desc, img, catalog 所属分类 create_time, views 浏览量, status, user_id, tags 标签, monthViews: [],
+_id, name, url, desc, img, catalog 所属分类 create_time, views 浏览量, status, user_id, tags 标签, monthViews: 0, today_add 今日新增最大为5,
 
 分类表
 _id name
@@ -44,7 +47,17 @@ app.post('/dopost', function(req, res, next) {
 
 下架网页-下架-状态修改
 删除网页-没有-删除
-
+.insert({
+    _id: 2,
+    commit_id: 1,
+    site_id: 144,
+    user_id: "sz+4wfiGspriwhKWtZ1nUw==",
+    user_name: 'DDR1',
+    content: '一般般啦1231233',
+    create_time: '2020-20-20',
+    to_user_id: "ZLMq+C9I+GNvK02AbfXvng==",
+    to_user_name: "1234"
+})
 
 图片
 正常第一次 选择图片之后进行展示 imgfile img也就是图片地址 imgbolb图片源文件 imgdef 默认图片
@@ -56,3 +69,58 @@ img不存在 -> imgdef展示默认图片 -> 选择图片 -> 展示imgblob -> 提
 
 s
 展示imgblob ? imgblob : img ? img : imgdef 
+
+
+// 评论 comments 
+_id, site_id: 哪个帖子的评论, user_id, user_name, user_face, content 
+// 回复 comments_replay
+_id, site_id, commit_id: 回复对应的评论, user_id, user_name, user_face, content, to_user_id, to_user_name, //to_user_face
+
+S 				-> site_id = 3
+A: NB			-> comment_id = 1
+B->A: YB		-> B->A to_commit_id也就是上面的comment_id
+C->A: OK
+
+A: HH			-> commit_id = 99
+B->A: HB		
+C->B: NB
+
+
+comment_id, user_id, site_id, to_user_id, to_comment_id, content
+1			A		 3		  null		  null			 NB
+2			B 		 3		  A			  1				 YB
+3			C 		 3		  A			  1				 OK
+// 
+99			A 		 3		  null		  null			 HH
+100			B 		 3		  A			  99			 HB
+101			C 		 3		  B			  100			 NB
+
+
+[
+	{
+		comment_id: 1, 
+		children: [
+			{comment_id: 2}, 
+			{comment_id: 3}
+		]
+	}, 
+	{
+		commit_id: 99,
+		chidlren: [
+			{
+				commit_id: 100,
+				children: [
+					{commit_id: 101}
+				]
+			}
+		]
+	}
+]
+
+
+
+收藏
+// _id user_id collection: [ { site_id, belongCatalog: [catalogId] } ], **commentCollection
+
+_id, user_id, site_id, belongCatalog: [catalogid], 
+

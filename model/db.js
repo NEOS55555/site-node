@@ -179,7 +179,23 @@ class Content {
 			})
 		})
 	}
-
+	aggregate (collectionName, condition) {
+		const that = this;
+		return new Promise((resolve, reject) => {
+			this._connect(function(db, dbo) {
+				
+				// result还是之前未修改的
+				dbo.collection(collectionName).aggregate(condition).toArray(function (err, result) {
+					if (err) {
+						(that.reject || reject)(err);
+					} else {
+						resolve(result);
+					}
+					db.close()
+				});
+			})
+		})
+	}
 }
 
 module.exports = Content;

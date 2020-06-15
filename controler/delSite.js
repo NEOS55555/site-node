@@ -1,8 +1,9 @@
+// 删除的时候，记得删除评论
 const sitedb = require('../model/currentDbs')
 const path = require('path')
 const {
 	deleteFolder,
-	isLegal
+	// isLegal
 } = require('../model/common.js')
 const {
 	prevCheck,
@@ -21,15 +22,16 @@ module.exports = async (req, res, next) => {
 	if (!prevCheck(req, res)) {
 		return;
 	}
-	if (!checkUserLogin(req, res)) {
+	const ust = checkUserLogin(req, res);
+	if (!ust) {
 		return ;
 	}
 	const {_id, status} = req.body;
-	if (!isLegal(_id) || !isLegal(status)) {
+	/*if (!isLegal(_id) || !isLegal(status)) {
 		return res.json(failed('', '该网站不存在！'))
-	}
+	}*/
 
-	const { user_id } = req.cookies
+	const { _id: user_id } = ust
 
 	try {
 		const [user] = await sitedb.find('users', {_id: user_id})
@@ -56,8 +58,10 @@ module.exports = async (req, res, next) => {
 		} else {		// 下架状态或草稿状态的删除就是真正的删除
 			await sitedb.deleteMany('sites', condition)
 			await sitedb.deleteMany('site_rate', {site_id: _id})
+			await sitedb.deleteMany('comments', {site_id: _id})
+			await sitedb.deleteMany('comments_reply', {site_id: _id})
 
-			deleteFolder(path.join(__dirname,`../upload/${_id}`))
+			deleteFolder(path.join(__dirname,`../upload/sites/${_id}`))
 			res.json(success())
 			
 		}

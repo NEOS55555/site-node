@@ -1,4 +1,5 @@
 const nodemailer  = require("nodemailer");
+const silly = require('silly-datetime')
 const fs = require('fs')
 /**
  * @getClientIP
@@ -27,7 +28,22 @@ exports.trim = (str='') => str.replace(/^\s+|\s+$/gm,'')
 
 // 创建文件夹
 
-exports.mkdir = (() => {
+exports.mkdir =  (filepath) => {
+    const arr=filepath.split('/');
+    let dir='.';
+    let f = false
+    for(let i=0;i<arr.length;i++){
+        dir += '/'+arr[i];
+    		// console.log(dir,i,fs.existsSync(dir), dirCache[dir])
+        if(!fs.existsSync(dir)){
+            fs.mkdirSync(dir);
+            // console.log(dir+'创建成功')
+            f = true;
+        }
+    }
+    return f;
+}
+/*exports.mkdir = (() => {
 	const dirCache={};
 	return (filepath) => {
 	    const arr=filepath.split('/');
@@ -45,7 +61,7 @@ exports.mkdir = (() => {
 	    }
 	    return f;
 	}
-})();
+})();*/
 
 exports.deleteFolder = function (path, onlyFile=false) {
 	let files = [];
@@ -70,7 +86,7 @@ exports.isLegal = (str='') => {
 	if (str === '' || str === null) {
 		return false;
 	}
-	const reg = /[\s\@\#\$\%\^\&\*\{\}\:\：\.\"\L\<\>\?\|]/ig
+	const reg = /[\s\@\#\$\%\^\&\*\{\}\:\.\"\'\<\>\?\|]/ig
 	return !reg.test(str)
 }
 exports.checkMail = (mail='') => {
@@ -100,7 +116,7 @@ exports.checkUrl = (url='') => {
 exports.sendMail = function (tos, subject, html) {
 	return new Promise((resolve, reject) => {
 		// const fromm = '778007921@qq.com'
-		const fromm = '1013293504@qq.com'
+		const fromm = 'starryskydark@foxmail.com'
 		const smtpTransport = nodemailer.createTransport({
 	        
 	        service:"qq",
@@ -116,7 +132,7 @@ exports.sendMail = function (tos, subject, html) {
 		try {
 			smtpTransport.sendMail({
 		        //fromm    : '标题别名 <foobar@latelee.org>',
-		        from: '<' + fromm + '>',
+		        from: '实用网站<' + fromm + '>',
 		        //'li@latelee.org, latelee@163.com',//收件人邮箱，多个邮箱地址间用英文逗号隔开
 		        to: tos,
 		        subject,//邮件主题
@@ -146,3 +162,18 @@ exports.clearRepArr = arr => {
 	}
 	return a;
 }
+
+// 获取文字字符长度
+exports.getStrChartLen = (str='') => {  
+  let len = 0;  
+  for (var i=0; i<str.length; i++) {  
+    if (str.charCodeAt(i)>127 || str.charCodeAt(i)==94) {  
+       len += 2;  
+     } else {  
+       len ++;  
+     }  
+   }  
+  return len;  
+}
+
+exports.fromatIOSDate = date => silly.format(date, 'YYYY-MM-DD HH:mm:ss')

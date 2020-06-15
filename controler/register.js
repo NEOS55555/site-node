@@ -1,10 +1,15 @@
 const sitedb = require('../model/currentDbs')
-const { superEmail, REG_CODE_EXP, RET, LOGIN_DURATION } = require('./constant');
+const { 
+	superEmail, REG_CODE_EXP, RET, LOGIN_DURATION, REGISTER_CODE,
+	MAX_NAME_CHART,
+	// MIN_NAME_CHART
+} = require('./constant');
 const {
 	prevCheck,
 	checkLegal,
 	success, 
 	failed,
+	checkPsw,
 	jwtSign
 } = require('./com')
 const md5 = require('../model/md5.js')
@@ -14,6 +19,7 @@ const {
 	getNextSequenceValue, 
 	checkMail,
 	trim,
+	getStrChartLen
 } = require('../model/common.js')
 // 注册用户
 module.exports = async (req, res, next) => {
@@ -30,13 +36,18 @@ module.exports = async (req, res, next) => {
 	if (!checkLegal(res, name, '用户名')) {
 		return ;
 	}
-	if (!psw) {
-		return res.send(failed('', '密码不能为空！'));
+	const nameChartLen = getStrChartLen(name)
+	if (nameChartLen > MAX_NAME_CHART) {
+		return res.send(failed('', '用户名不符合要求！'))
+	}
+	if (!checkPsw(psw)) {
+		return res.send(failed('', '密码不符合要求'));
 	}
 	if (!checkMail(email)) {
 		res.send(failed('', '邮箱不合法！'))
 		return ;
 	}
+	
 	const password = md5(psw);
 	/*if (!checkMail(email)) {
 		res.send(failed('', '邮箱不合法！'))
@@ -52,7 +63,7 @@ module.exports = async (req, res, next) => {
 		}
 		return res.send(failed('', errorInfo))
 	}
-	const [codeItem] = await sitedb.find('reg_code', {email, code})
+	const [codeItem] = await sitedb.find('reg_code', {email, code, type: REGISTER_CODE})
 
 	if (!codeItem) {
 		// if ()
@@ -64,8 +75,10 @@ module.exports = async (req, res, next) => {
 		return res.json(failed('', '验证码已过期！'))
 	}
 
+
 	getNextSequenceValue(sitedb, 'userId').then(async t_id => {
 		const _id = md5(t_id);
+		// await sitedb.insertOne('collections', {user_id: _id, collection: []})
 		const is_super = superEmail.indexOf(email) > -1
 		sitedb.insertOne('users', {
 			_id,
@@ -74,11 +87,16 @@ module.exports = async (req, res, next) => {
 			password,
 			email,
 			ip,
-			is_super
+			is_super,
+			// tody_add: 0,
+			// face: '',
+			// check_reply_num: 0,	// 消息
+			create_time: new Date(),
 		}).then(result => {
 			// 
 			const token = jwtSign({_id, name, is_async: is_super})
-			res.json(success({_id, name, token}, '注册成功！'))
+			res.cookie('user_id', _id)
+			res.json(success({_id, name, token, is_async: is_super}, '注册成功！'))
 		}).catch(err => {
 			res.json(failed(err))
 		})

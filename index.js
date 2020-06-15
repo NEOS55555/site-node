@@ -1,15 +1,17 @@
+// test
+const sitedb = require('./model/currentDbs')
+
 const express = require('express');
 const path = require('path')
 const fs = require('fs')
 
 const formidable = require("formidable");
 const bodyParser = require('body-parser');
-const {sitedb} = require('./model/currentDbs')
 const {getClientIP , getNextSequenceValue} = require('./model/common.js')
 const session = require('express-session')
 const cookieParser = require('cookie-parser')
 
-const router = require('./controler/index')
+const router = require('./controler')
 
 const app = express();
 
@@ -23,15 +25,17 @@ app.use(session({
 }))
 
 app.use(cookieParser());
-app.use(bodyParser.urlencoded({extended:false}));
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '2mb'}));
+app.use(bodyParser.urlencoded({limit: '2mb', extended:false}));
 app.use(express.static('./public'));
 app.use('/img', express.static('./upload'));
 
 // 每隔一段时间最好，自动修改超级管理员的密码
 
 // 获取网站类型列表
-app.post('/getCatalogList', router.getCatalogList)
+app.get('/getAllCatalog', router.getAllCatalog)
+// 分类+总数
+app.get('/getCatalogList', router.getCatalogList)
 
 // 获取网站列表
 app.post('/getSiteList', router.getSiteList)
@@ -44,6 +48,8 @@ app.post('/addSite', router.addSite)
 app.post('/editSite', router.editSite)
 // 添加分类
 app.post('/addCatalog', router.addCatalog)
+// 发表评论
+app.post('/reportCommit', router.reportCommit)
 // 用户注册
 app.post('/register', router.register)
 // 用户登录
@@ -52,6 +58,11 @@ app.post('/login', router.login)
 // 删除网站
 app.post('/delSite', router.delSite)
 app.post('/sendRegMailCode', router.sendRegMailCode)
+app.post('/sendRestPswCode', router.sendRestPswCode)
+// 重置密码
+app.post('/resetPassword', router.resetPassword)
+app.get('/getSiteDetail', router.getSiteDetail)
+app.get('/getReportCommit', router.getReportCommit)
 // 清除图片缓存
 app.post('/clearImgCache', router.clearImgCache)
 app.get('/getIP', router.getIP)
@@ -64,11 +75,31 @@ app.get('/getsession', (req, res) => {
 	console.log('-----------------------')
 	res.send(req.session)
 })
+app.get('/getReplyCommit', router.getReplyCommit)
 
 // 获取验证码
 app.get('/getCaptcha', router.getCaptcha)
-app.get('/system', router.enterSystem)
-app.get('/', router.getPage)
+// 发表回复
+app.post('/replyCommit', router.replyCommit)
+// 消息
+app.get('/getReplyMeList', router.getReplyMeList)
+// 保存头像
+app.post('/saveportrait', router.saveportrait)
+app.get('/clearreplynum', router.clearreplynum)
+app.get('/getNewestCommit', router.getNewestCommit)
+app.post('/getUserportrait', router.getUserportrait)
+app.post('/editCatalog', router.editCatalog)
+app.get('/delCatalog', router.delCatalog)
+app.get('/checkName', router.checkName)
+app.get('/getRecomdList', router.getRecomdList)
+app.get('/collectSite', router.collectSite)
+app.get('/getCollectList', router.getCollectList)
 
+// 路由
+// 进入需要登录验证的页面
+app.get('/system', router.enterLoginPage)
+app.get('/system/:id', router.enterLoginPage)
+// 进入其他页面
+app.get('*', router.getPage)
 
 app.listen(7890, '0.0.0.0')

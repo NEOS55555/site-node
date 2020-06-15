@@ -1,12 +1,13 @@
 const jwt  = require('jsonwebtoken');
-const { RET, LOGIN_DURATION } = require('./constant');
+const { RET, LOGIN_DURATION, OVERDUE_RES } = require('./constant');
 const sitedb = require('../model/currentDbs')
 
 const {
-	getNextSequenceValue, 
-	isLegal
+	isLegal,
+	getStrChartLen,
+	fromatIOSDate
 } = require('../model/common.js')
-
+// {_id, name, is_async: is_super}
 const jwtSign = params => jwt.sign({ ...params, iat: Math.floor(Date.now() / 1000) },  RET, { expiresIn: LOGIN_DURATION })
 const jwtVerify = token => jwt.verify(token, RET)
 exports.jwtSign = jwtSign;
@@ -52,7 +53,7 @@ exports.prevCheck = (req, res) => {
 exports.checkLegal = (res, str, ptn) => {
 	const ok = isLegal(str)
 	if (!ok) {
-		res.json(failed('', ptn + '不合法！'));
+		res.json(failed('', ptn + ' Illegitimate'));
 	}
 	return ok;
 }
@@ -61,6 +62,9 @@ exports.checkLegal = (res, str, ptn) => {
 const isUserLogin = (token) => {
 	// console.log(token)
 	let result = null;
+	if (!token) {
+		return {}
+	}
 	try {
 		const res = jwtVerify(token)
 		const { exp } = res, current = Math.floor(Date.now() / 1000);
@@ -72,7 +76,7 @@ const isUserLogin = (token) => {
 		}
 	} catch (err) {
 		// console.log(err)
-		result = null;
+		result = {};
 
 	}
 	// console.log(result)
@@ -84,8 +88,10 @@ exports.checkUserLogin = (req, res) => {
 	const token = req.headers.authorization;
 	const user_id = req.cookies.user_id
 	const ust = isUserLogin(token)
-	if (ust._id !== user_id ) {
-		res.json(failed('', 'token已过期, 请重新登录！', {resultCode: 233}))
+	// console.log(ust, user_id)
+	if (user_id === undefined || ust._id === undefined || ust._id !== user_id) {
+		res.json(failed('', 'token已过期, 请重新登录！', OVERDUE_RES))
+		// res.redirect('/')
 		return false;
 	}
 	return ust;
@@ -98,3 +104,54 @@ exports.checkUserLogin = (req, res) => {
 	res.cookie('sessionCookie', sessionCookie)
 }*/
 
+exports.getCode = (count=6) => {
+	let code = '';
+	for (let i = 0; i < count; i++) {
+		code += Math.floor(Math.random() * 36).toString(36)
+	}
+	return code;
+}
+
+exports.checkPsw = (psw='') => {
+	const pswlen = psw.length
+	const pswstrlen = getStrChartLen(psw);
+	const ok1 = pswstrlen <= 14 && pswstrlen >= 8
+	const ok2 = /(?=.*[a-zA-Z0-9])(?=.*[^a-zA-Z0-9]).{2,14}/.test(psw)
+	const ok3 = pswlen > 0 && !(/[\s\u4e00-\u9fa5]/.test(psw))
+	return ok1 && ok2 && ok3
+}
+
+exports.get$rated$val = (list, ip='', user_id='') => {
+	let length = list.length;
+	let isRated = false;
+	let value = 0;
+	for (let i = 0; i < length; i++) {
+		const item = list[i]
+		if (!isRated && (user_id === item.user_id || ip === item.user_ip)) {
+			isRated = true;
+		}
+		value += item.value || 0;
+	}
+	return {
+		isRated,
+		value,
+		length
+	}
+}
+
+exports.recheckReplyList = list => {
+	list.forEach(rpit => {
+		let [user={}, touser={}] = rpit.user
+		if (rpit.user_id == touser._id) {
+			[touser, user] = [user, touser]
+		}
+		rpit.create_time = fromatIOSDate(rpit.create_time)
+
+		rpit.user_name = user.name
+		rpit.user_face = user.face
+		rpit.to_user_name = touser.name
+		rpit.to_user_face = touser.face
+		delete rpit.user;
+	})
+	return list
+}

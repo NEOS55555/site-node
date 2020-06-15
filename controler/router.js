@@ -3,8 +3,9 @@ const {
 	isUserLogin,
 } = require('./com')
 const fs = require('fs')
+const path = require('path')
 const getPage = (req, res, next) => {
-	console.log(req.cookies, req.headers.cookie)
+	// console.log(req.cookies, req.headers.cookie)
 	fs.readFile(path.resolve(__dirname, '../public/index.html'), (err, result) => {
 		if (err) {
 			return next();
@@ -15,14 +16,14 @@ const getPage = (req, res, next) => {
 		res.end(result)
 	})
 }
-exports.enterSystem = (req, res, next) => {
+exports.enterLoginPage = (req, res, next) => {
 	// const user_id = getCookie(req.headers.cookie).user_id
-	if (!prevCheck(req, res)) {
+	/*if (!prevCheck(req, res)) {
 		return;
-	}
+	}*/
 	const user_token = req.cookies.user_token
 	const user_id = isUserLogin(user_token)._id;
-	if (user_id !== null) {
+	if (user_id) {
 		return getPage(req, res, next)
 	}
 	res.redirect('/')

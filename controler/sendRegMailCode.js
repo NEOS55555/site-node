@@ -9,9 +9,10 @@ const {
 	prevCheck,
 	success, 
 	failed,
+	getCode,
 } = require('./com')
 
-const { MAIL_MAX_COUNT } = require('./constant');
+const { MAIL_MAX_COUNT, REGISTER_CODE } = require('./constant');
 
 module.exports = async (req, res, next) => {
 	if (!prevCheck(req, res)) {
@@ -27,15 +28,12 @@ module.exports = async (req, res, next) => {
 		return res.send(failed('', '该邮箱已被注册！'))
 	}
 	console.log('send reg mail', email)
-	let code = '';
-	for (let i = 0; i < 6; i++) {
-		code += Math.floor(Math.random() * 36).toString(36)
-	}
+	let code = getCode();
 	// req.session.regMailCode = code;
 	// req.session.regMail = email;
 	// sitedb.find('reg_code', {email})
 	sendMail(email, '验证码', `验证码${code}`).then(okres => {
-		sitedb.findOneAndUpdate('reg_code', {email}, {
+		sitedb.findOneAndUpdate('reg_code', {email, type: REGISTER_CODE}, {
 			$set: {
 				code,
 			},
@@ -47,7 +45,7 @@ module.exports = async (req, res, next) => {
 			const { value } = result;
 			if (value) {
 				if (value.times - 1 >= MAIL_MAX_COUNT) {
-					return res.json(failed('', `邮件发送失败，已超过${MAIL_MAX_COUNT}次数`))
+					return res.json(failed('', `邮件发送失败，今天已超过${MAIL_MAX_COUNT}次数`))
 				}
 				res.json(success('', '验证码已发送，请注意查收!'))
 			} else {
@@ -55,7 +53,8 @@ module.exports = async (req, res, next) => {
 					email,
 					code,
 					date: new Date(),
-					times: 1
+					times: 1,
+					type: REGISTER_CODE
 				}).then(r => res.json(success('', '验证码已发送，请注意查收!')))
 			}
 		})
