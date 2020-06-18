@@ -40,6 +40,12 @@ const getRecomdList = require('./getRecomdList')
 const collectSite = require('./collectSite')
 const getCatalogList = require('./getCatalogList')
 const getCollectList = require('./getCollectList')
+const updateCatalogSort = require('./updateCatalogSort')
+const addNotice = require('./addNotice')
+const getNoticeList = require('./getNoticeList')
+const delNotice = require('./delNotice')
+const editNotice = require('./editNotice')
+
 const {
 	addSite,
 	editSite,
@@ -161,5 +167,10 @@ exports.getRecomdList = getRecomdList
 exports.collectSite = collectSite
 exports.getCatalogList = getCatalogList
 exports.getCollectList = getCollectList
+exports.updateCatalogSort = updateCatalogSort
+exports.addNotice = addNotice
+exports.getNoticeList = getNoticeList
+exports.delNotice = delNotice
+exports.editNotice = editNotice
 
 

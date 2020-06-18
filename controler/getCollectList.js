@@ -43,9 +43,9 @@ module.exports = async (req, res, next) => {
 	
 	let $facet = {
 		list: [
+			{ $sort: { create_time: -1 } },
 			{ $skip: pageSize * (pageIndex - 1) },
 			{ $limit: pageSize },
-			{ $sort: { create_time: -1 } },
 			{
 		        $lookup: {
 		            from: "sites",

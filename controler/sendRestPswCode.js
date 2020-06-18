@@ -33,7 +33,7 @@ module.exports = async (req, res, next) => {
 	// req.session.regMailCode = code;
 	// req.session.regMail = email;
 	// sitedb.find('reg_code', {email})
-	sendMail(email, '验证码', `验证码${code}`).then(okres => {
+	sendMail(email, '[好玩实用网-更多有趣更多好玩]', `注册验证码：<span style="color: red;">${code}</span>， ${REG_CODE_EXP/60/1000}分钟内有效，请及时使用！`).then(okres => {
 		sitedb.findOneAndUpdate('reg_code', {email, type: RESET_PASSWORD_CODE}, {
 			$set: {
 				code,

@@ -132,7 +132,7 @@ exports.sendMail = function (tos, subject, html) {
 		try {
 			smtpTransport.sendMail({
 		        //fromm    : '标题别名 <foobar@latelee.org>',
-		        from: '实用网站<' + fromm + '>',
+		        from: '好玩实用网<' + fromm + '>',
 		        //'li@latelee.org, latelee@163.com',//收件人邮箱，多个邮箱地址间用英文逗号隔开
 		        to: tos,
 		        subject,//邮件主题

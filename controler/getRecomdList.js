@@ -22,9 +22,9 @@ module.exports = async (req, res, next) => {
 
 	sitedb.aggregate('sites', 
 		[
+			{ $sort: {create_time: 1} },
 			{ $match: { status: NORMAL_CODE, catalog: { $in: catalog } } },
 			{ $sample: { size: 6 }},
-			{ $sort: {create_time: 1} },
 			{ $project: { _id: 1, name: 1, img: 1 } }
 		]
 	).then(async list => {

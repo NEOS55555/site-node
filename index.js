@@ -17,7 +17,7 @@ const app = express();
 
 app.use(session({
   name: 'machineCookie',
-  secret:"w*yui2.qhiu",		//设置签名秘钥  内容可以任意填写
+  secret:"MIIEpAIBAAKCAQEAs4nNSQfaORLb4yL49jcPI+LN+UshKX+gWcqBATwKepN2BvG+",		//设置签名秘钥  内容可以任意填写
   // cookie:{maxAge:30 * 1000 * 60},		//设置cookie的过期时间，例：30minutes后session和相应的cookie失效过期
   // cookie:{maxAge: 20 * 1000},		// 测试用
   resave:false,			//强制保存，如果session没有被修改也要重新保存
@@ -48,6 +48,8 @@ app.post('/addSite', router.addSite)
 app.post('/editSite', router.editSite)
 // 添加分类
 app.post('/addCatalog', router.addCatalog)
+// 新增公告
+app.post('/addNotice', router.addNotice)
 // 发表评论
 app.post('/reportCommit', router.reportCommit)
 // 用户注册
@@ -66,6 +68,10 @@ app.get('/getReportCommit', router.getReportCommit)
 // 清除图片缓存
 app.post('/clearImgCache', router.clearImgCache)
 app.get('/getIP', router.getIP)
+app.get('/getNoticeList', router.getNoticeList)
+// 删除公告
+app.get('/delNotice', router.delNotice)
+app.post('/editNotice', router.editNotice)
 // 设置评分
 app.post('/setRate', router.setRate)
 app.post('/addView', router.addView)
@@ -93,7 +99,10 @@ app.get('/delCatalog', router.delCatalog)
 app.get('/checkName', router.checkName)
 app.get('/getRecomdList', router.getRecomdList)
 app.get('/collectSite', router.collectSite)
+// 获取收藏列表
 app.get('/getCollectList', router.getCollectList)
+// 跟新分类的顺序
+app.post('/updateCatalogSort', router.updateCatalogSort)
 
 // 路由
 // 进入需要登录验证的页面

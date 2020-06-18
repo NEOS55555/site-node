@@ -52,7 +52,7 @@ module.exports = async (req, res, next) => {
 		$lookup.pipeline[0].$match.$expr.$and.unshift({ $eq: ['$status', NORMAL_CODE] })
 	}
 
-	sitedb.aggregate('catalog', [{ $lookup }]).then((list) => {
+	sitedb.aggregate('catalog', [{ $sort: {sortIndex: -1} },{ $lookup }]).then((list) => {
 		// console.log(list)
 		list.forEach(it => {
 			it.total = (it.catalogtotal[0] || {}).total || 0

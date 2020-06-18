@@ -1,5 +1,5 @@
 const jwt  = require('jsonwebtoken');
-const { RET, LOGIN_DURATION, OVERDUE_RES } = require('./constant');
+const { RET, LOGIN_DURATION, OVERDUE_RES, SSVIP_EMAIL } = require('./constant');
 const sitedb = require('../model/currentDbs')
 
 const {
@@ -7,6 +7,7 @@ const {
 	getStrChartLen,
 	fromatIOSDate
 } = require('../model/common.js')
+
 // {_id, name, is_async: is_super}
 const jwtSign = params => jwt.sign({ ...params, iat: Math.floor(Date.now() / 1000) },  RET, { expiresIn: LOGIN_DURATION })
 const jwtVerify = token => jwt.verify(token, RET)
@@ -84,7 +85,7 @@ const isUserLogin = (token) => {
 	// req.session.user_id === req.cookies.user_id
 }
 exports.isUserLogin = isUserLogin;
-exports.checkUserLogin = (req, res) => {
+const checkUserLogin = (req, res) => {
 	const token = req.headers.authorization;
 	const user_id = req.cookies.user_id
 	const ust = isUserLogin(token)
@@ -96,7 +97,7 @@ exports.checkUserLogin = (req, res) => {
 	}
 	return ust;
 }
-
+exports.checkUserLogin = checkUserLogin
 /*exports.setSessionCookie = (req, res) => {
 	const sessionCookie = md5(Math.random() + Date.now())
 	// const sessionStatus = md5(Math.random() + 2 + Date.now())
@@ -154,4 +155,20 @@ exports.recheckReplyList = list => {
 		delete rpit.user;
 	})
 	return list
+}
+
+
+exports.isSuperVip = async (req, res) => {
+	const ust = checkUserLogin(req, res);
+	if (!ust) {
+		return false;
+	}
+	const { _id: user_id } = ust;
+	const [user] = await sitedb.find('users', {_id: user_id})
+	const { is_super, email } = user;
+	if (!is_super || email !== SSVIP_EMAIL) {
+		res.json(failed('', 'Insufficient authority !'));
+		return false
+	}
+	return ust;
 }

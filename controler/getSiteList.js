@@ -80,7 +80,7 @@ module.exports = async (req, res, next) => {
 			
 			const [user] = await sitedb.find('users', {_id: user_id})
 			if (user) {
-				if (user.is_super) {
+				if (user.is_super && status !== DRAFT_CODE) {
 					delete conditoin.create_user_id
 				}/* else {
 					// 编辑状态，非super不可 获取其他状态
@@ -108,9 +108,9 @@ module.exports = async (req, res, next) => {
 	sortOrder[(orderMap[orderBy] ? orderBy : 'create_time')] = -1;
 	const $facet = {
 		list: [
+			{ $sort: sortOrder },
 			{ $skip: pageSize * (pageIndex - 1) },
 			{ $limit: pageSize },
-			{ $sort: sortOrder },
 			{
 		        $lookup: {
 		            from: "site_rate",

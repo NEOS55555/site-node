@@ -16,9 +16,8 @@ module.exports = (req, res, next) => {
 	};
 	
 
-	sitedb.find('catalog', conditoin).then(list => {
-		list = list.map(({_id, name}) => ({_id, name}))
-		// list.unshift({_id: -1, name: '全部'})
+	sitedb.find('catalog', conditoin, {}, {sortIndex: -1}).then(list => {
+		list = list.map(({_id, name, sortIndex}) => ({_id, name, sortIndex}))
 		res.json(success({list}))
 	})
 }

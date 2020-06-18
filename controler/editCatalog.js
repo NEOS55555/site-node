@@ -6,25 +6,18 @@ const {
 	success, 
 	failed,
 	checkUserLogin,
-	checkLegal
+	checkLegal,
+	isSuperVip
 } = require('./com')
-const {
-	SSVIP_EMAIL
-} = require('./constant')
+
 
 module.exports = async (req, res, next) => {
 	if (!prevCheck(req, res)) {
 		return;
 	}
-	const ust = checkUserLogin(req, res);
+	const ust = await isSuperVip(req, res);
 	if (!ust) {
-		return;
-	}
-	const { _id: user_id } = ust;
-	const [user] = await sitedb.find('users', {_id: user_id})
-	const { is_super, email } = user;
-	if (!is_super || email !== SSVIP_EMAIL) {
-		return res.json(failed('', 'Insufficient authority !'));
+		return ;
 	}
 	let { name, _id } = req.body;
 	if (!checkLegal(res, name, '分类名')) {

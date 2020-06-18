@@ -1,30 +1,21 @@
 const sitedb = require('../model/currentDbs')
-const md5 = require('../model/md5.js')
 
 const {
 	prevCheck,
 	success, 
 	failed,
-	checkUserLogin,
+	isSuperVip,
 	checkLegal
 } = require('./com')
-const {
-	SSVIP_EMAIL
-} = require('./constant')
+
 
 module.exports = async (req, res, next) => {
 	if (!prevCheck(req, res)) {
 		return;
 	}
-	const ust = checkUserLogin(req, res);
+	const ust = await isSuperVip(req, res);
 	if (!ust) {
-		return;
-	}
-	const { _id: user_id } = ust;
-	const [user] = await sitedb.find('users', {_id: user_id})
-	const { is_super, email } = user;
-	if (!is_super || email !== SSVIP_EMAIL) {
-		return res.json(failed('', 'Insufficient authority !'));
+		return ;
 	}
 	let { _id } = req.query;
 	_id = parseInt(_id);

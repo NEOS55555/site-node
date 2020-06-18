@@ -12,7 +12,7 @@ const {
 	getCode,
 } = require('./com')
 
-const { MAIL_MAX_COUNT, REGISTER_CODE } = require('./constant');
+const { MAIL_MAX_COUNT, REGISTER_CODE, REG_CODE_EXP } = require('./constant');
 
 module.exports = async (req, res, next) => {
 	if (!prevCheck(req, res)) {
@@ -27,12 +27,12 @@ module.exports = async (req, res, next) => {
 	if (siteList.length > 0) {
 		return res.send(failed('', '该邮箱已被注册！'))
 	}
-	console.log('send reg mail', email)
+	// console.log('send reg mail', email)
 	let code = getCode();
 	// req.session.regMailCode = code;
 	// req.session.regMail = email;
 	// sitedb.find('reg_code', {email})
-	sendMail(email, '验证码', `验证码${code}`).then(okres => {
+	sendMail(email, '[好玩实用网-更多有趣更多好玩]', `注册验证码：<span style="color: red;">${code}</span>， ${REG_CODE_EXP/60/1000}分钟内有效，请及时注册！`).then(okres => {
 		sitedb.findOneAndUpdate('reg_code', {email, type: REGISTER_CODE}, {
 			$set: {
 				code,

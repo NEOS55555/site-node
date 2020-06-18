@@ -1,3 +1,8 @@
+const fs = require('fs');
+
+
+const RET = fs.readFileSync(__dirname + '/private.key').toString();
+
 const DRAFT_CODE = 2;
 const DELETE_CODE = 0;
 const NORMAL_CODE = 1;
@@ -7,7 +12,7 @@ const MAIL_MAX_COUNT = 5;
 
 const REG_CODE_EXP = 30 * 60 * 1000;
 
-const RET = 'shhhhh';
+// const RET = 'shhhhh';
 
 // 秒
 const LOGIN_DURATION = 60 * 120

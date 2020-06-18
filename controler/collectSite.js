@@ -43,10 +43,10 @@ module.exports = async (req, res, next) => {
 					site_id,
 					catalog: oneSite.catalog
 				}).then(result => {
-					setTimeout(() => {
-
 					res.json(success())
-					}, 3000)
+					/*setTimeout(() => {
+
+					}, 3000)*/
 				})
 			}).catch(err => {
 				console.log(err)

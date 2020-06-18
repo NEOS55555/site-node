@@ -42,7 +42,12 @@ module.exports = (req, res, next) => {
 		return res.json(failed('', '验证码不正确!', {resultCode: 133}))
 	}
 	const password = md5(psw);
-	sitedb.find('users', {$or: [{name}, {email: name}]}).then(([item]) => {
+	sitedb.findOneAndUpdate('users', 
+		{$or: [{name}, {email: name}]}, 
+		{$set: {last_login_time: new Date()}}, 
+		{new: true}
+	).then(result => {
+		const item = result.value;
 		if (!item) {
 			return res.json(failed('', '该用户不存在!'))
 		}
