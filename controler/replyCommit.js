@@ -74,7 +74,7 @@ module.exports = async (req, res, next) => {
 	const { name: user_name, face: user_face } = user;
 	const { name: to_user_name } = touser;
 
-	getNextSequenceValue(sitedb, 'common').then(_id => {
+	getNextSequenceValue(sitedb, 'comment').then(_id => {
 		const insertData = {
 			_id,  
 			commit_id,

@@ -83,7 +83,7 @@ module.exports = async (req, res, next) => {
 		sitedb.insertOne('users', {
 			_id,
 			name,
-			psw,
+			// psw,
 			password,
 			email,
 			ip,

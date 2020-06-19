@@ -1,8 +1,9 @@
-{ "_id" : "catalogId", "value" : 0 }
-{ "_id" : "rateId", "value" : 0 }
+{ "_id" : "catalogId", "value" : 1 }
+{ "_id" : "rateId", "value" : 1 }
 { "_id" : "siteId", "value" : 11 }
-{ "_id" : "userId", "value" : 0 }
-{ "_id" : "common", "value" : 0 }
-{ "_id" : "notice_id", "value" : 0 }
-{ "_id" : "site_views", "value" : 0 }
-{ "_id" : "siteCollectId", "value" : 0 }
+{ "_id" : "userId", "value" : 1 }
+{ "_id" : "common", "value" : 1 }
+{ "_id" : "comment", "value" : 1 }
+{ "_id" : "notice_id", "value" : 1 }
+{ "_id" : "site_views", "value" : 1 }
+{ "_id" : "siteCollectId", "value" : 1 }

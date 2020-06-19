@@ -7,7 +7,6 @@ const fs = require('fs')
 
 const formidable = require("formidable");
 const bodyParser = require('body-parser');
-const {getClientIP , getNextSequenceValue} = require('./model/common.js')
 const session = require('express-session')
 const cookieParser = require('cookie-parser')
 
@@ -106,8 +105,14 @@ app.post('/updateCatalogSort', router.updateCatalogSort)
 
 // 路由
 // 进入需要登录验证的页面
+app.get('/account/portrait', router.enterLoginPage)
+app.get('/catalogmng', router.enterLoginPage)
+app.get('/noticemng', router.enterLoginPage)
+app.get('/collect', router.enterLoginPage)
+app.get('/collect/:catalog', router.enterLoginPage)
+app.get('/system/:catalog/:search', router.enterLoginPage)
+app.get('/system/:catalog', router.enterLoginPage)
 app.get('/system', router.enterLoginPage)
-app.get('/system/:id', router.enterLoginPage)
 // 进入其他页面
 app.get('*', router.getPage)
 
