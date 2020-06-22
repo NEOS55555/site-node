@@ -29,6 +29,7 @@ const {
 	ONE_DAY_MAX_ADD,
 	MAX_SITE_NAME,
 	MAX_SIT_DESC,
+	MAX_SITE_IMG,
 } = require('./constant')
 
 // 检查网站新增以及编辑的参数是否正确
@@ -128,11 +129,11 @@ function checkSiteImg (req, res, fields, files, _id) {
 		const oldpath = files.img[0].path;
 		// 判断文件尺寸
 		var size = parseInt(files.img[0].size);
-		if (size > 1024 * 1024) {
+		if (size > 1024 * 1024 * MAX_SITE_IMG) {
 			// 删除图片
 			// 这个path是图片存入的地址
 			fs.unlink(oldpath);
-			res.json(failed('', '图片尺寸大于1M！'))
+			res.json(failed('', '图片尺寸大于'+MAX_SITE_IMG+'M！'))
 			return false;
 		}
 
@@ -204,7 +205,6 @@ exports.addSite = async (req, res, next) => {
 	form.parse(req, async function (err, fields, files) {
 		if (err) {
 			delErrorImg(files)
-			console.log('addSite', err)
 			return res.json(failed(err))
 		}
 		const { name: [name=''], url: [url=''], desc: [desc=''], catalog=[], status: [tStatus=NORMAL_CODE], tags=[] } = fields
@@ -278,7 +278,6 @@ exports.editSite = async (req, res, next) => {
 	form.parse(req, async function (err, fields, files) {
 		if (err) {
 			delErrorImg(files)
-			console.log('editSite', err)
 			return res.json(failed(err))
 		}
 		const {_id: [t_id], name: [name=''], url: [url=''], desc: [desc=''], catalog=[], status: [tStatus=NORMAL_CODE], tags=[]} = fields
