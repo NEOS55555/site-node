@@ -43,18 +43,18 @@ module.exports = (req, res, next) => {
 	}
 	const password = md5(psw);
 	sitedb.findOneAndUpdate('users', 
-		{$or: [{name}, {email: name}]}, 
+		{$or: [{name}, {email: name}], $and: [{password}]}, 
 		{$set: {last_login_time: new Date()}}, 
 		{new: true}
 	).then(result => {
 		const item = result.value;
 		if (!item) {
-			return res.json(failed('', '该用户不存在!'))
+			return res.json(failed('', '该用户不存在或密码不正确!'))
 		}
-		const { _id, name, password: curpsw, is_super, check_reply_num } = item;
-		if (password !== curpsw ) {
+		const { _id, name, /*password: curpsw,*/ is_super, check_reply_num } = item;
+		/*if (password !== curpsw ) {
 			return res.json(failed('', '密码不正确!'))
-		}
+		}*/
 		res.cookie('user_id', _id)
 		// req.session.user_id = _id;
 		const token = jwtSign({_id, name, is_async: is_super})
