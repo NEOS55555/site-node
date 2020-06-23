@@ -116,4 +116,4 @@ app.get('/system', router.enterLoginPage)
 // 进入其他页面
 app.get('*', router.getPage)
 
-app.listen(7890, '0.0.0.0')
+app.listen(80, '0.0.0.0')

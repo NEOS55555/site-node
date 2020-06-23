@@ -5,5 +5,5 @@
 { "_id" : "common", "value" : 1 }
 { "_id" : "comment", "value" : 1 }
 { "_id" : "notice_id", "value" : 1 }
-{ "_id" : "site_views", "value" : 1 }
+{ "_id" : "site_views", "value" : 0 }
 { "_id" : "siteCollectId", "value" : 1 }
