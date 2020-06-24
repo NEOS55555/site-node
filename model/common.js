@@ -89,6 +89,17 @@ exports.isLegal = (str='') => {
 	const reg = /[\s\@\#\$\%\^\&\*\{\}\:\.\"\'\<\>\?\|]/ig
 	return !reg.test(str)
 }
+// 不包含空格
+exports.isLegalExps = (str='') => {
+	if (typeof str === 'number') {
+		return !isNaN(str);
+	}
+	if (str === '' || str === null) {
+		return false;
+	}
+	const reg = /[\@\#\$\%\^\&\*\{\}\:\.\"\'\<\>\?\|]/ig
+	return !reg.test(str)
+}
 exports.checkMail = (mail='') => {
 	if (mail === '' || mail === null) {
 		return false;

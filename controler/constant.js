@@ -21,7 +21,7 @@ const superEmail = [SSVIP_EMAIL]
 const LOG_OVERDUE_CODE = 233;
 
 module.exports = {
-	FEEDBACK_SITEID: 0,
+	FEEDBACK_SITEID: 0,	// 用户反馈的评论--对应的网站id
 	MAX_SITE_IMG: 2,	// 网站封面图最大2m
 	LOG_OVERDUE_CODE,
 	OVERDUE_RES: {resultCode: LOG_OVERDUE_CODE},

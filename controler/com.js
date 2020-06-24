@@ -4,6 +4,7 @@ const sitedb = require('../model/currentDbs')
 
 const {
 	isLegal,
+	isLegalExps,
 	getStrChartLen,
 	fromatIOSDate
 } = require('../model/common.js')
@@ -53,6 +54,13 @@ exports.prevCheck = (req, res) => {
 }
 exports.checkLegal = (res, str, ptn) => {
 	const ok = isLegal(str)
+	if (!ok) {
+		res.json(failed('', ptn + ' Illegitimate'));
+	}
+	return ok;
+}
+exports.checkLegalExps = (res, str, ptn) => {
+	const ok = isLegalExps(str)
 	if (!ok) {
 		res.json(failed('', ptn + ' Illegitimate'));
 	}

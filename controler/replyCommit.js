@@ -32,7 +32,7 @@ module.exports = async (req, res, next) => {
 		return false;
 	}*/
 	if (content.length > MAX_COMMIT_LEN) {
-		res.json(failed('', '尽量不要写作文哦，太长了！'))
+		res.json(failed('', 'len error!'))
 		return false;
 	}
 

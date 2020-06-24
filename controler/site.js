@@ -8,6 +8,7 @@ const silly = require('silly-datetime')
 const {
 	prevCheck,
 	checkLegal,
+	checkLegalExps,
 	success, 
 	failed,
 	checkUserLogin,
@@ -51,7 +52,7 @@ async function checkSiteParam (req, res, fields, _id) {
 		return false;
 	}
 	// 所有状态-至少要有名字
-	if (!checkLegal(res, name, '网站名称')) {
+	if (!checkLegalExps(res, name, 'name')) {
 		return false;
 	}
 	const nameChartLen = getStrChartLen(name)
@@ -240,7 +241,7 @@ exports.addSite = async (req, res, next) => {
 			const time = new Date()
 			sitedb.insertOne('sites', {
 				_id, 
-				name, 
+				name: trim(name), 
 				url, 
 				desc, 
 				img: fileurl ? `/img/sites/${_id}/${tname}` : imgsrc ? imgsrc : '', 
@@ -326,7 +327,7 @@ exports.editSite = async (req, res, next) => {
 		sitedb.updateOne('sites', {_id}, {
 			$set: {
 				update_user_id: user_id,
-				name, 
+				name: trim(name), 
 				url, 
 				desc, 
 				img: fileurl ? `/img/sites/${_id}/${tname}` : imgsrc ? imgsrc : '', 
