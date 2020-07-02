@@ -92,7 +92,7 @@ module.exports = async (req, res, next) => {
 		if (isFeedback) {
 			delete insertData.site_name
 		}
-		sitedb.insertOne('comments_reply', insertData).then(r => res.json(success({
+		sitedb.insertOne('comments', insertData).then(r => res.json(success({
 			...insertData, user_name, user_face, to_user_name, 
 			create_time: fromatIOSDate(insertData.create_time)
 			// to_user_face 

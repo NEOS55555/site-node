@@ -38,7 +38,7 @@ module.exports = async (req, res, next) => {
 	if (isTotal) {
 		$facet.total = [{$count: 'list_total'}]
 	}
-	sitedb.aggregate('comments_reply', [
+	sitedb.aggregate('comments', [
 		// 把自己回复自己排除掉
 		{ $match: { to_user_id: user_id, user_id: { $ne: user_id } } },
 		{ $facet }

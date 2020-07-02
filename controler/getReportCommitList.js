@@ -29,8 +29,10 @@ module.exports = async (req, res, next) => {
 	const conditoin = { site_id }
 
 	const commentReplyCdt = {
+		to_user_id: {$exists: true},
         $expr: {
             $and: [
+            	
                 {
                     $eq: ['$commit_id', '$$cmt_id']
                 }
@@ -42,7 +44,7 @@ module.exports = async (req, res, next) => {
 	const $facet = {
 		list: [
 			// { $sort: {is_notice: -1} },
-			{ $sort: { create_time: -1 } },
+			{ $sort: { create_time: 1 } },
 			{ $skip: pageSize * (pageIndex - 1) },
 			{ $limit: pageSize },
 			{
@@ -69,7 +71,7 @@ module.exports = async (req, res, next) => {
 		    },
 			{
 		        $lookup: {
-		            from: "comments_reply",
+		            from: "comments",
 		            // localField: "_id",
 		            // foreignField: "commit_id",
 		            let: { cmt_id: "$_id" },
@@ -82,7 +84,7 @@ module.exports = async (req, res, next) => {
 		    },
 		    {
 		        $lookup: {
-		            from: "comments_reply",
+		            from: "comments",
 		            // localField: "_id",
 		            // foreignField: "commit_id",
 		            let: { cmt_id: "$_id" },

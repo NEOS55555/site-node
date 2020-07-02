@@ -16,9 +16,9 @@ module.exports = async (req, res, next) => {
 	site_id = parseInt(site_id);
 	commit_id = parseInt(commit_id);
 	
-	const conditoin = { site_id, commit_id }
+	const conditoin = { site_id, commit_id, to_user_id: { $exists: true } }
 	
-	sitedb.aggregate('comments_reply', 
+	sitedb.aggregate('comments', 
 		[
 			{ $match: conditoin },
 			{ $sort: {create_time: 1} },
