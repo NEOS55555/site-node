@@ -5,6 +5,7 @@ const {
 	failed,
 	checkUserLogin,
 } = require('./com')
+const images = require("images");
 const {
 	mkdir,
 } = require('../model/common.js')
@@ -28,11 +29,17 @@ module.exports = (req, res, next) => {
 	var dataBuffer = Buffer.from(base64Data, 'base64');
 	fileurl = `/upload/users/${user_name}`
 	mkdir(fileurl)
-	fs.writeFile(path.resolve(__dirname+'/../' + fileurl + '/portrait.png'), dataBuffer, function(err) {
+	const pngPath = path.resolve(__dirname+'/../' + fileurl )
+	const pngName = '/portrait1.png';
+	images(dataBuffer).size(112).save(pngPath + '/portrait.png', {            
+        quality : 50                    //保存图片到文件,图片质量为50
+    });
+	/*fs.writeFile(pngPath + pngName, dataBuffer, function(err) {
 		if(err){
 			console.log(err)
 			res.json(failed('', 'filed!'));
-		}else{
+		}else{*/
+			
 			sitedb.updateOne('users', {_id: user_id}, {
 				$set: {
 					face: `/img/users/${user_name}/portrait.png`
@@ -41,8 +48,9 @@ module.exports = (req, res, next) => {
 				// console.log(result)
 				res.json(success('', '保存成功！'));
 			})
-		}
-	});
+		/*}
+	});*/
+	
 	// const ip = getClientIP(req);
 	
 }
