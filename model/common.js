@@ -24,8 +24,8 @@ exports.getNextSequenceValue = (db, sequenceName) => {
 		}).catch(err => reject(err))
 	})
 }
-exports.trim = (str='') => str.replace(/^\s+|\s+$/gm,'')
-
+const trim = (str='') => str.replace(/^\s+|\s+$/gm,'')
+exports.trim = trim
 // 创建文件夹
 
 exports.mkdir =  (filepath) => {
