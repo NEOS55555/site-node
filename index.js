@@ -37,10 +37,10 @@ app.post('/getSiteList', router.getSiteList)
 
 
 // 添加网站
-app.post('/addSite', router.addSite)
+// app.post('/addSite', router.addSite)
 
 // 添加网站
-app.post('/editSite', router.editSite)
+// app.post('/editSite', router.editSite)
 // 添加分类
 app.post('/addCatalog', router.addCatalog)
 // 新增公告
@@ -85,7 +85,7 @@ app.post('/replyCommit', router.replyCommit)
 // 消息
 app.get('/getReplyMeList', router.getReplyMeList)
 // 保存头像
-app.post('/saveportrait', router.saveportrait)
+// app.post('/saveportrait', router.saveportrait)
 app.get('/clearreplynum', router.clearreplynum)
 app.get('/getNewestCommit', router.getNewestCommit)
 app.post('/getUserportrait', router.getUserportrait)

@@ -188,3 +188,18 @@ exports.getStrChartLen = (str='') => {
 }
 
 exports.fromatIOSDate = date => silly.format(date, 'YYYY-MM-DD HH:mm:ss')
+
+exports.strSearch = (str='') => {
+	str = trim(str);
+	if ( /\$\(\)\*\+\.\[\]\?\\\/\^\{\}/ig.test(str)) {
+		str = '\\' + str;
+	}
+	let reg = null
+	try {
+		reg = new RegExp(str, 'gim')
+	} catch (e) {
+		reg = new RegExp('')
+		console.log('reg err')
+	}	
+	return reg;
+}

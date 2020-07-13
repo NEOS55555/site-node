@@ -12,6 +12,7 @@ const {
 	clearRepArr,
 	trim,
 	fromatIOSDate,
+	strSearch
 } = require('../model/common.js')
 const {
 	getSiteCollectSql
@@ -25,10 +26,6 @@ const {
 } = require('./constant')
 
 
-
-function strSearch (str='') {
-	return new RegExp(str, 'gim')
-}
 
 module.exports = async (req, res, next) => {
 	if (!prevCheck(req, res)) {
