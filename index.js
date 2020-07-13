@@ -1,9 +1,5 @@
 // test
-const sitedb = require('./model/currentDbs')
-
 const express = require('express');
-const path = require('path')
-const fs = require('fs')
 
 const formidable = require("formidable");
 const bodyParser = require('body-parser');
@@ -116,4 +112,4 @@ app.get('/system', router.enterLoginPage)
 // 进入其他页面
 app.get('*', router.getPage)
 
-app.listen(80, '0.0.0.0')
+app.listen(7890, '0.0.0.0')
