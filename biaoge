@@ -1,3 +1,7 @@
+// 浏览量
+views
+_id, ip, user_id, count
+
 // 评论表
 _id, user_id, site_id, to_user_id, create_time, to_comment_id, content
 
